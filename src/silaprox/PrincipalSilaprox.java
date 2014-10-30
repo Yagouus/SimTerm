@@ -9,39 +9,37 @@ import edu.smu.tspell.wordnet.NounSynset;
 import edu.smu.tspell.wordnet.Synset;
 import edu.smu.tspell.wordnet.SynsetType;
 import edu.smu.tspell.wordnet.WordNetDatabase;
+import java.util.ArrayList;
 
-/**
- *
- * @author yagouus
- */
 public class PrincipalSilaprox {
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
         System.setProperty("wordnet.database.dir", "/usr/local/WordNet-3.0/dict/"); // Establecemos la ruta de la base de datos de Wordnet 
         WordNetDatabase database = WordNetDatabase.getFileInstance();
 
-        NounSynset nounSynset;
-        NounSynset[] hypernyms;
-        String word;
+        Termino palabra1 = new Termino();
+        Termino palabra2 = new Termino();
 
-        Synset[] synsets = database.getSynsets("dog", SynsetType.NOUN);         // Palabra a buscar        
+        palabra1.setTermino();
+        palabra2.setTermino();
 
-        nounSynset = (NounSynset) (synsets[0]);                                 // Elegimos el synset de la palabra que queremos usar
-        System.out.println(nounSynset.getWordForms()[0]);                       // Mostramos la palabra a buscar
-        
-        hypernyms = nounSynset.getHypernyms();                                  // Leemos el primer hiperonimo de la primera glosa
+        palabra1.calculateHypernym();
+        palabra2.calculateHypernym();
 
-        do {
+        palabra1.findCommonTermWith(palabra2);
 
-            word = hypernyms[0].toString();                                     // Guardamos en un String el hiperonimo
+        palabra1.getTermino();
+        palabra1.showHypernyms();
 
-            System.out.println(hypernyms[0]);
-            hypernyms = hypernyms[0].getHypernyms();                            // Cogemos el primer hiperonimo del termino actual
+        palabra2.getTermino();
+        palabra2.showHypernyms();
 
-        } while (!word.equals("Noun@1740[entity] - that which is perceived or known or inferred to have its own distinct existence (living or nonliving)"));
+        System.out.println("Common Hypernym:" + palabra1.getCommonTerm());
+
+        System.out.println("\nDistance to commonTerm:");
+        System.out.println("Term 1: " + palabra1.distanceToCommonTerm());
+        System.out.println("Term 2: " + palabra2.distanceToCommonTerm());
+
     }
 
 }
