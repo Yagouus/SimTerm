@@ -5,11 +5,8 @@
  */
 package silaprox;
 
-import edu.smu.tspell.wordnet.NounSynset;
-import edu.smu.tspell.wordnet.Synset;
-import edu.smu.tspell.wordnet.SynsetType;
 import edu.smu.tspell.wordnet.WordNetDatabase;
-import java.util.ArrayList;
+
 
 public class PrincipalSilaprox {
 
@@ -17,6 +14,9 @@ public class PrincipalSilaprox {
         System.setProperty("wordnet.database.dir", "/usr/local/WordNet-3.0/dict/"); // Establecemos la ruta de la base de datos de Wordnet 
         WordNetDatabase database = WordNetDatabase.getFileInstance();
 
+        Similarity similaridad = new Similarity();
+        Termino pComun = new Termino();
+        
         Termino palabra1 = new Termino();
         Termino palabra2 = new Termino();
 
@@ -26,19 +26,23 @@ public class PrincipalSilaprox {
         palabra1.calculateHypernym();
         palabra2.calculateHypernym();
 
-        palabra1.findCommonTermWith(palabra2);
-
+        pComun = similaridad.findCommonTerm(palabra2, palabra1);
+        similaridad.distanceToCommonTerm(palabra1, pComun);
+        similaridad.distanceToCommonTerm(palabra2, pComun);
+        
         palabra1.getTermino();
         palabra1.showHypernyms();
 
         palabra2.getTermino();
         palabra2.showHypernyms();
 
-        System.out.println("Common Hypernym:" + palabra1.getCommonTerm());
+        System.out.println("Common Hypernym:" + pComun.getNounSynset());
 
         System.out.println("\nDistance to commonTerm:");
-        System.out.println("Term 1: " + palabra1.distanceToCommonTerm());
-        System.out.println("Term 2: " + palabra2.distanceToCommonTerm());
+        System.out.println("Term 1: " + similaridad.distanceToCommonTerm(palabra1, pComun));
+        System.out.println("Term 2: " + similaridad.distanceToCommonTerm(palabra2, pComun));
+        
+        System.out.println("PathLength: " + similaridad.pathLenght(palabra1, palabra2));
 
     }
 

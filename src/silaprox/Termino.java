@@ -18,10 +18,10 @@ public class Termino {
 
     private String word;
     private NounSynset nounSynset;
-    private NounSynset commonTerm;
     private NounSynset[] currentHypernym;
     private ArrayList<NounSynset> hypernyms = new ArrayList<>();
 
+    
     // Setters    
     public void setCurrentHypernym(NounSynset[] currentHypernym) {
         this.currentHypernym = currentHypernym;
@@ -33,11 +33,9 @@ public class Termino {
 
     public void setNounSynset(NounSynset nounSynset) {
         this.nounSynset = nounSynset;
+        this.word = nounSynset.getWordForms()[0];
     }
 
-    public void setCommonTerm(NounSynset commonTerm) {
-        this.commonTerm = commonTerm;
-    }
 
     // Getters
     public ArrayList<NounSynset> getHypernyms() {
@@ -50,10 +48,6 @@ public class Termino {
 
     public NounSynset getNounSynset() {
         return nounSynset;
-    }
-
-    public NounSynset getCommonTerm() {
-        return commonTerm;
     }
 
     public NounSynset[] getCurrentHypernym() {
@@ -91,38 +85,7 @@ public class Termino {
 
         } while (!aux.equals("Noun@1740[entity] - that which is perceived or known or inferred to have its own distinct existence (living or nonliving)"));
 
-    }
-
-    public void findCommonTermWith(Termino p2) {
-        int k = 0, l = 0;
-        boolean found = false;
-
-        while (k < this.hypernyms.size() && found == false) {
-            l = 0;
-            while (l < p2.getHypernyms().size() && found == false) {
-                if (this.hypernyms.get(k).equals(p2.getHypernyms().get(l))) {
-                    this.commonTerm = this.getHypernyms().get(k);
-                    p2.setCommonTerm(commonTerm);
-                    found = true;
-                }
-                l++;
-            }
-            k++;
-        }
-
-    }
-
-    public int distanceToCommonTerm() {
-
-        int i = 0;
-
-        while (!this.hypernyms.get(i).equals(this.commonTerm)) {
-
-            i++;
-
-        }
-        return i;
-    }
+    }   
     
     public void showHypernyms(){
         
@@ -131,4 +94,11 @@ public class Termino {
         }
         System.out.println("\n");
     }
+
+    @Override
+    public String toString() {
+        return this.word; //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    
 }
