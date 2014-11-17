@@ -73,6 +73,7 @@ public class Termino {
 
         String aux;
 
+        this.hypernyms.add(nounSynset);
         this.currentHypernym = nounSynset.getHypernyms();
 
         do {
