@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package silaprox;
 
 import edu.smu.tspell.wordnet.NounSynset;
@@ -10,23 +5,15 @@ import edu.smu.tspell.wordnet.Synset;
 import edu.smu.tspell.wordnet.SynsetType;
 import edu.smu.tspell.wordnet.WordNetDatabase;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
 
 public class Termino {
 
     WordNetDatabase database = WordNetDatabase.getFileInstance();
-
     private String word;
     private NounSynset nounSynset;
-    private NounSynset[] currentHypernym;
-    private ArrayList<NounSynset> hypernyms = new ArrayList<>();
+    private ArrayList<ArrayList<NounSynset>> hypernyms = new ArrayList<>();
 
-    
-    // Setters    
-    public void setCurrentHypernym(NounSynset[] currentHypernym) {
-        this.currentHypernym = currentHypernym;
-    }
-
+    // Setters
     public void setDatabase(WordNetDatabase database) {
         this.database = database;
     }
@@ -36,10 +23,9 @@ public class Termino {
         this.word = nounSynset.getWordForms()[0];
     }
 
-
     // Getters
     public ArrayList<NounSynset> getHypernyms() {
-        return hypernyms;
+        return hypernyms.get(0);
     }
 
     public WordNetDatabase getDatabase() {
@@ -50,56 +36,142 @@ public class Termino {
         return nounSynset;
     }
 
-    public NounSynset[] getCurrentHypernym() {
-        return currentHypernym;
-    }
-
     // Metodos Propios
-    public void setTermino() {
+    public void setTermino(String termino) {
 
-        this.word = JOptionPane.showInputDialog("Introduzca una palabra");
+        this.word = termino;
         Synset[] synsets = database.getSynsets(this.word, SynsetType.NOUN);
         nounSynset = (NounSynset) (synsets[0]);
 
     }
-    
-    public void getTermino(){
-        
-        System.out.println(this.word);
-        
+
+    public String getTermino() {
+
+        return (this.word);
+
     }
 
     public void calculateHypernym() {
 
-        String aux;
+        this.hiperonimos(nounSynset, 0);
 
-        this.hypernyms.add(nounSynset);
-        this.currentHypernym = nounSynset.getHypernyms();
+        /*String aux = null;
+         int i = 0;
 
-        do {
+         this.hypernyms.add(nounSynset);
+         this.currentHypernym = nounSynset.getHypernyms();
 
-            aux = this.currentHypernym[0].toString();                                     // Guardamos en un String el hiperonimo
+         do {
 
-            this.hypernyms.add(currentHypernym[0]);
+         aux = this.currentHypernym[0].toString();                                     // Guardamos en un String el hiperonimo
 
-            currentHypernym = currentHypernym[0].getHypernyms();                            // Cogemos el primer hiperonimo del termino actual
+         this.hypernyms.add(currentHypernym[0]);
 
-        } while (!aux.equals("Noun@1740[entity] - that which is perceived or known or inferred to have its own distinct existence (living or nonliving)"));
+         currentHypernym = currentHypernym[0].getHypernyms();                            // Cogemos el primer hiperonimo del termino actual
 
-    }   
-    
-    public void showHypernyms(){
-        
-        for(int i = 0; i < this.hypernyms.size(); i++){
-            System.out.println(this.hypernyms.get(i));
-        }
-        System.out.println("\n");
+         i++;
+
+         } while (!aux.equals("Noun@1740[entity] - that which is perceived or known or inferred to have its own distinct existence (living or nonliving)"));
+         */
     }
 
+    public String showHypernyms() {
+
+        String a = "";
+
+        for (int i = 0; i < this.hypernyms.size(); i++) {
+            a += "\nTermino: ";
+            a += i + "\n";
+            for (int j = 0; j < this.hypernyms.get(i).size(); j++) {
+                a += (this.hypernyms.get(i).get(j));
+                a += "\n";
+            }
+        }
+
+        a += "\n";
+
+        return a;
+
+    }
+
+    /*public int getShortestDeep(){
+        
+     int max = 0;
+        
+     for(int i = 0; i < this.hypernyms.size(); i++){
+            
+     if(this.hypernyms.get(i).size() > max)
+     max = this.hypernyms.get(i).size();   
+            
+     }
+        
+     return max;
+        
+     }*/
     @Override
     public String toString() {
         return this.word; //To change body of generated methods, choose Tools | Templates.
     }
-    
-    
+
+    private void hiperonimos(NounSynset t1, int n) {
+
+        NounSynset[] currentHypernym;
+        currentHypernym = new NounSynset[1];
+        String aux = null;
+        int num = 0;
+        int i = 0;
+
+        if (this.hypernyms.isEmpty()) {
+
+            this.hypernyms.add(new ArrayList<NounSynset>());
+
+        } /*else {
+
+         this.hypernyms.add((ArrayList<NounSynset>) this.hypernyms.get(num).clone());
+         this.hypernyms.get(0).add(t1);
+
+         }*/
+
+        this.hypernyms.get(n).add(t1);
+        aux = t1.toString();
+        currentHypernym = t1.getHypernyms();
+
+        if (!aux.equals("Noun@1740[entity] - that which is perceived or known or inferred to have its own distinct existence (living or nonliving)")) {
+
+            do {
+
+                aux = currentHypernym[0].toString();                                     // Guardamos en un String el hiperonimo
+
+                if (currentHypernym.length > 1) {
+
+                    this.hypernyms.get(num).add(currentHypernym[0]);
+
+                    for (int j = 1; j < currentHypernym.length; j++) {
+
+                        this.hypernyms.add((ArrayList<NounSynset>) this.hypernyms.get(num).clone());
+                        num++;
+                        hiperonimos(currentHypernym[j], num);
+
+                    }
+
+                } else {
+
+                    this.hypernyms.get(n).add(currentHypernym[0]);
+
+                }
+
+                if (!aux.equals("Noun@1740[entity] - that which is perceived or known or inferred to have its own distinct existence (living or nonliving)")) {
+
+                    currentHypernym = currentHypernym[0].getHypernyms();
+
+                }
+
+                i++;
+
+            } while (!aux.equals("Noun@1740[entity] - that which is perceived or known or inferred to have its own distinct existence (living or nonliving)"));
+
+        }
+
+    }
+
 }
