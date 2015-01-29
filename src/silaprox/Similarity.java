@@ -1,63 +1,120 @@
 package silaprox;
 
 import edu.smu.tspell.wordnet.NounSynset;
+import java.util.ArrayList;
 
 public class Similarity {
 
     public final static int maxDeep = 18;
+    public Termino t1;
+    public Termino t2;
 
-    //Utilidades
+    //UTILIDADES
     //Calcula si un termino es igual a otro (mismo synset)
-    public static boolean sameNounSynset(Termino p1, Termino p2) {
+    public boolean sameNounSynset(Termino p1, Termino p2) {
 
         return p1.getNounSynset().equals(p2.getNounSynset());
 
     }
 
     //Calcula el hyperonimo comun entre dos terminos
-    public static Termino findCommonTerm(Termino p1, Termino p2) {
+    public Termino findCommonTerm(Termino p1, Termino p2) {
         int k = 0, l = 0;
         boolean found = false;
-        Termino resultado = new Termino();
-                
-                while (k < p1.getHypernyms().size() && found == false) {
-                    l = 0;
-                    while (l < p2.getHypernyms().size() && found == false) {
+        ArrayList<Termino> commons = new ArrayList<>();
+        Termino LCS;
 
-                        if (p1.getHypernyms().get(k).equals(p2.getHypernyms().get(l))) {
-                            resultado.setNounSynset(p1.getHypernyms().get(k));
+        //Calculamos todos los terminos comunes existentes
+        for (int i = 0; i < p1.getHypernyms().size(); i++) {
+            for (int j = 0; j < p2.getHypernyms().size(); j++) {
+                while (k < p1.getHypernyms().get(i).size() && found == false) {
+                    l = 0;
+                    while (l < p2.getHypernyms().get(j).size() && found == false) {
+                        if (p1.getHypernyms().get(i).get(k).equals(p2.getHypernyms().get(j).get(l))) {
+                            commons.add(new Termino(p1.getHypernyms().get(i).get(k)));
                             found = true;
                         }
-                        
+
                         l++;
                     }
                     k++;
                 }
-            
-                
-        
-        return resultado;
+            }
+        }
+
+        //Calculamos la profundidad de los terminos
+        int d = 0;
+        LCS = commons.get(0);
+        for (int z = 0; z < commons.size(); z++) {
+
+            if (d < termDeep(p1, commons.get(z))) {
+                d = termDeep(p1, commons.get(z));
+                LCS = commons.get(z);
+            }
+
+        }
+
+        return LCS;
+    }
+
+    //Metodo auxiliar para calcular la altura de un termino
+    public int termDeep(Termino p1, Termino comun) {
+
+        int k = 1;
+
+        for (int j = 0; j < p1.getHypernyms().size(); j++) {
+
+            k = 1;
+            int i = p1.getHypernyms().get(j).size() - 1;
+
+            while (i > 0) {
+                NounSynset aux = p1.getHypernyms().get(j).get(i);
+                k++;
+                i--;
+                if (aux.equals(comun.getNounSynset())) {
+                    return k;
+                }
+
+            }
+
+        }
+
+        return k;
+
     }
 
     //Calcula la distancia entre un termino y un hiperonimo (un termino y el Comun)
-    public static int distanceToCommonTerm(Termino p1, Termino comun) {
+    public int distanceToCommonTerm(Termino p1, Termino comun) {
 
-        int i = 0;
+        int i = 0, k = 19, j = 0;
 
-        while (!p1.getHypernyms().get(i).equals(comun.getNounSynset())) {
+        for (i = 0; i < p1.getHypernyms().size(); i++) {
+            j = 0;
+            while (j < p1.getHypernyms().get(i).size()) {
+                NounSynset aux = p1.getHypernyms().get(i).get(j);
+                j++;
 
-            i++;
+                if (aux.equals(comun.getNounSynset())) {
+                    break;
+                }
 
+            }
+            if (j == 0) {
+                j++;
+            }
+            
+            if(j < k){
+                k = j;
+            }
+            
         }
-        if (i != 0) {
-            return i;
-        } else {
-            return ++i;
-        }
+        
+        return k - 1;
+
     }
 
     //Calcula la distancia entre dos terminos
-    public static float length(Termino p1, Termino p2) {
+    public float length(Termino p1, Termino p2) {
 
         Termino common = new Termino();
         int a, b;
@@ -71,7 +128,7 @@ public class Similarity {
     }
 
     //Calcula la profundidad del hyperonimo de un termino dados estos
-    public static int CommonTermDeep(Termino p1, Termino p2) {
+    public int CommonTermDeep(Termino p1, Termino p2) {
 
         int k = 0; //p1.getShortestDeep();
 
@@ -81,7 +138,7 @@ public class Similarity {
     }
 
     //Calcula si un termino es hyperonimo de otro
-    public static boolean TermIsHypernym(Termino p1, Termino p2) {
+    public boolean TermIsHypernym(Termino p1, Termino p2) {
 
         for (int i = 0; i < p1.getHypernyms().size(); i++) {
 
@@ -95,11 +152,10 @@ public class Similarity {
 
     }
 
-    //Calcular si un termino es hiperonimo de otro
-    // Medidas
-    public static float pathLenght(Termino p1, Termino p2) {
+    //MEDIDAS
+    public float pathLenght(Termino p1, Termino p2) {
 
-        if (Similarity.sameNounSynset(p1, p2)) {
+        if (this.sameNounSynset(p1, p2)) {
 
             return 1;
 
@@ -122,29 +178,29 @@ public class Similarity {
 
     }
 
-    /*public static float WuAndPalmer(Termino p1, Termino p2) {
+    public float WuAndPalmer(Termino p1, Termino p2) {
 
-     if (Similarity.sameNounSynset(p1, p2)) {
+        if (this.sameNounSynset(p1, p2)) {
 
-     return 1;
+            return 1;
 
-     } else {
+        } else {
 
-     float resultado;
+            float resultado;
 
-     int a = Similarity.distanceToCommonTerm(p1, Similarity.findCommonTerm(p1, p2));
-     int b = Similarity.distanceToCommonTerm(p2, Similarity.findCommonTerm(p1, p2));
-     int c = Similarity.CommonTermDeep(p1, p2);
+            int a = this.distanceToCommonTerm(p1, this.findCommonTerm(p1, p2));
+            int b = this.distanceToCommonTerm(p2, this.findCommonTerm(p1, p2));
+            int c = this.CommonTermDeep(p1, p2);
 
-     resultado = (float) (2 * c) / ((a + b) + 2 * c);
+            resultado = (float) (2 * c) / ((a + b) + 2 * c);
 
-     return (float) resultado;
-     }
-     }
-     */
-    public static float WuAndPalmer2(Termino p1, Termino p2) {
+            return (float) resultado;
+        }
+    }
 
-        if (Similarity.sameNounSynset(p1, p2)) {
+    public float WuAndPalmer2(Termino p1, Termino p2) {
+
+        if (this.sameNounSynset(p1, p2)) {
 
             return 1;
 
@@ -153,8 +209,8 @@ public class Similarity {
             float resultado;
 
             float a = 0; //GETDEEP
-            float b = 0; 
-            float c = Similarity.CommonTermDeep(p1, p2);
+            float b = 0;
+            float c = this.CommonTermDeep(p1, p2);
 
             resultado = (2 * c) / (a + b);
 

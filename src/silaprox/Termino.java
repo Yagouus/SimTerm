@@ -13,7 +13,16 @@ public class Termino {
     private NounSynset nounSynset;
     private ArrayList<ArrayList<NounSynset>> hypernyms = new ArrayList<>();
 
-    // Setters
+    //CONSTRUCTOR
+    public Termino(NounSynset nounSynset) {
+        this.setNounSynset(nounSynset);
+    }
+
+    public Termino() {
+
+    }
+
+    //SETTERS
     public void setDatabase(WordNetDatabase database) {
         this.database = database;
     }
@@ -23,9 +32,9 @@ public class Termino {
         this.word = nounSynset.getWordForms()[0];
     }
 
-    // Getters
-    public ArrayList<NounSynset> getHypernyms() {
-        return hypernyms.get(0);
+    //GETTERS
+    public ArrayList<ArrayList<NounSynset>> getHypernyms() {
+        return hypernyms;
     }
 
     public WordNetDatabase getDatabase() {
@@ -36,7 +45,7 @@ public class Termino {
         return nounSynset;
     }
 
-    // Metodos Propios
+    //METODOS PROPIOS
     public void setTermino(String termino) {
 
         this.word = termino;
@@ -139,13 +148,11 @@ public class Termino {
         if (!aux.equals("Noun@1740[entity] - that which is perceived or known or inferred to have its own distinct existence (living or nonliving)")) {
 
             do {
-
+                int numo = num;
                 aux = currentHypernym[0].toString();                                     // Guardamos en un String el hiperonimo
 
                 if (currentHypernym.length > 1) {
-
-                    this.hypernyms.get(num).add(currentHypernym[0]);
-
+      
                     for (int j = 1; j < currentHypernym.length; j++) {
 
                         this.hypernyms.add((ArrayList<NounSynset>) this.hypernyms.get(num).clone());
@@ -153,6 +160,8 @@ public class Termino {
                         hiperonimos(currentHypernym[j], num);
 
                     }
+
+                    this.hypernyms.get(numo).add(currentHypernym[0]);
 
                 } else {
 

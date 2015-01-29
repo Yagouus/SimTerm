@@ -6,7 +6,6 @@
 package GUI;
 
 import edu.smu.tspell.wordnet.WordNetDatabase;
-import java.awt.event.MouseEvent;
 import silaprox.Similarity;
 import silaprox.Termino;
 
@@ -101,6 +100,8 @@ public class Ventana extends javax.swing.JFrame {
 
     private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
 
+        Similarity similaridad = new Similarity();
+        
         System.setProperty("wordnet.database.dir", "WordNet-3.0/dict/"); // Establecemos la ruta de la base de datos de Wordnet 
         WordNetDatabase database = WordNetDatabase.getFileInstance();
         
@@ -117,7 +118,7 @@ public class Ventana extends javax.swing.JFrame {
         palabra1.calculateHypernym();
         palabra2.calculateHypernym();
 
-        pComun = Similarity.findCommonTerm(palabra2, palabra1);
+        pComun = similaridad.findCommonTerm(palabra2, palabra1);
 
 
         output += palabra1.getTermino();
@@ -127,13 +128,14 @@ public class Ventana extends javax.swing.JFrame {
         output += palabra2.showHypernyms();
 
         output += ("\nCOMMON TERM: " + pComun.getNounSynset());
+        output += ("\nCOMMON TERM DEEP: " + similaridad.termDeep(palabra2, pComun));
 
         output += ("\n\nDISTANCE TO COMMON TERM:");
-        //output += ("\n\tTerm 1: " + Similarity.distanceToCommonTerm(palabra1, pComun));
-       //output += ("\n\tTerm 2: " + Similarity.distanceToCommonTerm(palabra2, pComun));
+        output += ("\n\tTerm 1: " + similaridad.distanceToCommonTerm(palabra1, pComun));
+        output += ("\n\tTerm 2: " + similaridad.distanceToCommonTerm(palabra2, pComun));
 
         output += ("\n\nMEASURES:");
-        //output += ("\n\tPathLength: " + Similarity.pathLenght(palabra1, palabra2));
+        output += ("\n\tPathLength: " + similaridad.pathLenght(palabra1, palabra2));
         //output += ("\n\tWu & Palmer: " + Similarity.WuAndPalmer(palabra1, palabra2));
         //output += ("\n\tWu & Palmer2: " + Similarity.WuAndPalmer2(palabra1, palabra2));
        // output += ("\n\tMedia Wu & Palmer: " + (Similarity.WuAndPalmer(palabra1, palabra2) + Similarity.WuAndPalmer2(palabra1, palabra2)) / 2);
