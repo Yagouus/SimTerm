@@ -128,7 +128,7 @@ public class Ventana extends javax.swing.JFrame {
         output += palabra2.showHypernyms();
 
         output += ("\nCOMMON TERM: " + pComun.getNounSynset());
-        output += ("\nCOMMON TERM DEEP: " + similaridad.termDeep(palabra2, pComun));
+        output += ("\nCOMMON TERM DEPTH: " + similaridad.termDepth(palabra2, pComun));
 
         output += ("\n\nDISTANCE TO COMMON TERM:");
         output += ("\n\tTerm 1: " + similaridad.distanceToCommonTerm(palabra1, pComun));
@@ -136,9 +136,9 @@ public class Ventana extends javax.swing.JFrame {
 
         output += ("\n\nMEASURES:");
         output += ("\n\tPathLength: " + similaridad.pathLenght(palabra1, palabra2));
-        //output += ("\n\tWu & Palmer: " + Similarity.WuAndPalmer(palabra1, palabra2));
-        //output += ("\n\tWu & Palmer2: " + Similarity.WuAndPalmer2(palabra1, palabra2));
-       // output += ("\n\tMedia Wu & Palmer: " + (Similarity.WuAndPalmer(palabra1, palabra2) + Similarity.WuAndPalmer2(palabra1, palabra2)) / 2);
+        output += ("\n\tWu & Palmer: " + similaridad.WuAndPalmer(palabra1, palabra2));
+        output += ("\n\tLeacock & Chodorow: " + similaridad.leacockChodorow(palabra1, palabra2));
+
 
         textArea1.setText(output);
 

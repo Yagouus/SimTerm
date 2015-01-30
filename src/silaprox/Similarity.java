@@ -1,13 +1,15 @@
 package silaprox;
 
 import edu.smu.tspell.wordnet.NounSynset;
+import static java.lang.Math.log;
 import java.util.ArrayList;
 
 public class Similarity {
 
-    public final static int maxDeep = 18;
+    public final static int maxDepth = 18;
     public Termino t1;
     public Termino t2;
+    int maxDepthWordnet = 20;
 
     //UTILIDADES
     //Calcula si un termino es igual a otro (mismo synset)
@@ -47,8 +49,8 @@ public class Similarity {
         LCS = commons.get(0);
         for (int z = 0; z < commons.size(); z++) {
 
-            if (d < termDeep(p1, commons.get(z))) {
-                d = termDeep(p1, commons.get(z));
+            if (d < termDepth(p1, commons.get(z))) {
+                d = termDepth(p1, commons.get(z));
                 LCS = commons.get(z);
             }
 
@@ -58,7 +60,7 @@ public class Similarity {
     }
 
     //Metodo auxiliar para calcular la altura de un termino
-    public int termDeep(Termino p1, Termino comun) {
+    public int termDepth(Termino p1, Termino comun) {
 
         int k = 1;
 
@@ -102,13 +104,13 @@ public class Similarity {
             if (j == 0) {
                 j++;
             }
-            
-            if(j < k){
+
+            if (j < k) {
                 k = j;
             }
-            
+
         }
-        
+
         return k - 1;
 
     }
@@ -128,9 +130,9 @@ public class Similarity {
     }
 
     //Calcula la profundidad del hyperonimo de un termino dados estos
-    public int CommonTermDeep(Termino p1, Termino p2) {
+    public int CommonTermDepth(Termino p1, Termino p2) {
 
-        int k = 0; //p1.getShortestDeep();
+        int k = 0; //p1.getShortestDepth();
 
         int f = distanceToCommonTerm(p1, findCommonTerm(p1, p2));
 
@@ -155,67 +157,44 @@ public class Similarity {
     //MEDIDAS
     public float pathLenght(Termino p1, Termino p2) {
 
-        if (this.sameNounSynset(p1, p2)) {
+        Termino common = new Termino();
+        int a, b;
 
-            return 1;
+        common = findCommonTerm(p1, p2);
 
+        a = distanceToCommonTerm(p1, common);
+        b = distanceToCommonTerm(p2, common);
+
+        if (TermIsHypernym(p1, p2)) {
+            return (float) 1 / (a + b);
         } else {
-
-            Termino common = new Termino();
-            int a, b;
-
-            common = findCommonTerm(p1, p2);
-
-            a = distanceToCommonTerm(p1, common);
-            b = distanceToCommonTerm(p2, common);
-
-            if (TermIsHypernym(p1, p2)) {
-                return (float) 1 / (a + b);
-            } else {
-                return (float) 1 / (a + b + 1);
-            }
+            return (float) 1 / (a + b + 1);
         }
 
     }
 
     public float WuAndPalmer(Termino p1, Termino p2) {
 
-        if (this.sameNounSynset(p1, p2)) {
+        float resultado;
 
-            return 1;
+        int a = this.distanceToCommonTerm(p1, this.findCommonTerm(p1, p2));
+        int b = this.distanceToCommonTerm(p2, this.findCommonTerm(p1, p2));
+        int c = this.termDepth(p1, this.findCommonTerm(p1, p2));
 
-        } else {
+        resultado = (float) (2 * c) / ((a + b) + 2 * c);
 
-            float resultado;
+        return (float) resultado;
 
-            int a = this.distanceToCommonTerm(p1, this.findCommonTerm(p1, p2));
-            int b = this.distanceToCommonTerm(p2, this.findCommonTerm(p1, p2));
-            int c = this.CommonTermDeep(p1, p2);
-
-            resultado = (float) (2 * c) / ((a + b) + 2 * c);
-
-            return (float) resultado;
-        }
     }
 
-    public float WuAndPalmer2(Termino p1, Termino p2) {
+    public float leacockChodorow(Termino p1, Termino p2) {
+        
+        float resultado;
 
-        if (this.sameNounSynset(p1, p2)) {
+        float a = this.length(p1, p2);
+               
+        resultado = (float) -log(a / (2*maxDepthWordnet)); 
 
-            return 1;
-
-        } else {
-
-            float resultado;
-
-            float a = 0; //GETDEEP
-            float b = 0;
-            float c = this.CommonTermDeep(p1, p2);
-
-            resultado = (2 * c) / (a + b);
-
-            return (float) resultado;
-        }
+        return (float) resultado;
     }
-
 }

@@ -12,6 +12,7 @@ public class Termino {
     private String word;
     private NounSynset nounSynset;
     private ArrayList<ArrayList<NounSynset>> hypernyms = new ArrayList<>();
+    private  int num = 0;
 
     //CONSTRUCTOR
     public Termino(NounSynset nounSynset) {
@@ -103,20 +104,6 @@ public class Termino {
 
     }
 
-    /*public int getShortestDeep(){
-        
-     int max = 0;
-        
-     for(int i = 0; i < this.hypernyms.size(); i++){
-            
-     if(this.hypernyms.get(i).size() > max)
-     max = this.hypernyms.get(i).size();   
-            
-     }
-        
-     return max;
-        
-     }*/
     @Override
     public String toString() {
         return this.word; //To change body of generated methods, choose Tools | Templates.
@@ -127,20 +114,15 @@ public class Termino {
         NounSynset[] currentHypernym;
         currentHypernym = new NounSynset[1];
         String aux = null;
-        int num = 0;
+       
         int i = 0;
 
         if (this.hypernyms.isEmpty()) {
 
             this.hypernyms.add(new ArrayList<NounSynset>());
 
-        } /*else {
-
-         this.hypernyms.add((ArrayList<NounSynset>) this.hypernyms.get(num).clone());
-         this.hypernyms.get(0).add(t1);
-
-         }*/
-
+        }
+        
         this.hypernyms.get(n).add(t1);
         aux = t1.toString();
         currentHypernym = t1.getHypernyms();
